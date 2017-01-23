@@ -1,41 +1,35 @@
 class Employee
   attr_reader :state, :hp
 
+  DATA = { 
+    super: {atk: 0.6, init_hp: 120, hp: {op: "+", value: -10} }, 
+    normal: {atk: 0.8, init_hp: 100, hp: {op: "+", value: 10} }, 
+    warning: {atk: 1, init_hp: 60, hp: {op: "+", value: 40} }, 
+    dying: {atk: 1.5, init_hp: 30, hp: {op: "*", value: 2} }, 
+    game_over: {atk: 0, init_hp: 0, hp: {op: "*", value: 1} } 
+  }
+
   def initialize(state: state)
     @state = state
     @hp    = init_hp
   end
 
   def tickets_attack(atk)
-    if state == :super
-      @hp -= atk * 0.6
-    elsif state == :normal
-      @hp -= atk * 0.8
-    elsif state == :warning
-      @hp -= atk * 1
-    elsif state == :dying
-      @hp -= atk * 1.5
-    elsif state == :game_over
-      @hp
-    end
+
+    @hp -= atk * DATA[state][:atk]
 
     update_state!
   end
 
   def take_break
-   if state == :super
-      @hp -= 10
-   elsif state == :normal
-      @hp += 10
-   elsif state == :warning
-      @hp += 40
-   elsif state == :dying
-      @hp *= 2
-   elsif state == :game_over
-      @hp
-   end
 
-   update_state!
+    if DATA[state][:hp][:op] == "+"
+      @hp += DATA[state][:hp][:value]
+    elsif DATA[state][:hp][:op] == "*"
+      @hp *= DATA[state][:hp][:value]
+    end
+
+    update_state!
   end
 
   private
@@ -55,16 +49,6 @@ class Employee
   end
 
   def init_hp
-    if state == :super
-      120
-    elsif state == :normal
-      100
-    elsif state == :warning
-      60
-    elsif state == :dying
-      30
-    elsif state == :game_over
-      0
-    end
+    DATA[state][:init_hp]
   end
 end
